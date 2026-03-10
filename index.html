@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Julius Hedera — Living Architecture</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #060806;
+    color: #c8c8c0;
+    font-family: 'Inter', system-ui, sans-serif;
+    overflow-x: hidden;
+    min-height: 100vh;
+  }
+
+  canvas#vine-canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+  }
+
+  .overlay {
+    position: relative;
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  header {
+    text-align: center;
+    padding: 3rem 1rem 1rem;
+    pointer-events: none;
+  }
+
+  header h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 400;
+    color: #c8a44e;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.3rem;
+  }
+
+  header .subtitle {
+    font-size: 0.85rem;
+    color: #5a6a50;
+    font-weight: 300;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  .agent-nodes {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 2;
+    pointer-events: none;
+  }
+
+  .agent-node {
+    position: absolute;
+    pointer-events: all;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+  }
+
+  .agent-node:hover { transform: scale(1.1); }
+
+  .agent-node .emoji {
+    font-size: 2rem;
+    display: block;
+    text-align: center;
+    filter: drop-shadow(0 0 12px rgba(200, 164, 78, 0.3));
+  }
+
+  .agent-node .label {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.85rem;
+    color: #8a9a7a;
+    text-align: center;
+    margin-top: 0.2rem;
+    white-space: nowrap;
+  }
+
+  .hub-node .emoji {
+    font-size: 3rem;
+    filter: drop-shadow(0 0 20px rgba(200, 164, 78, 0.5));
+  }
+
+  .hub-node .label {
+    font-size: 1rem;
+    color: #c8a44e;
+    font-weight: 600;
+  }
+
+  /* Detail panel */
+  .detail-panel {
+    position: fixed;
+    right: -420px;
+    top: 0;
+    width: 400px;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(10, 14, 10, 0.97), rgba(15, 20, 15, 0.97));
+    border-left: 1px solid rgba(200, 164, 78, 0.15);
+    z-index: 10;
+    padding: 2rem;
+    overflow-y: auto;
+    transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    backdrop-filter: blur(20px);
+    pointer-events: all;
+  }
+
+  .detail-panel.open { right: 0; }
+
+  .detail-panel .close-btn {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: none;
+    border: 1px solid rgba(200, 164, 78, 0.2);
+    color: #8a9a7a;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+  }
+
+  .detail-panel .close-btn:hover {
+    border-color: #c8a44e;
+    color: #c8a44e;
+  }
+
+  .detail-panel .agent-header {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(200, 164, 78, 0.1);
+  }
+
+  .detail-panel .agent-emoji { font-size: 2.5rem; }
+
+  .detail-panel .agent-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.8rem;
+    color: #c8a44e;
+    margin: 0.3rem 0;
+  }
+
+  .detail-panel .agent-role {
+    font-size: 0.8rem;
+    color: #5a6a50;
+    line-height: 1.5;
+  }
+
+  .detail-panel .agent-workspace {
+    font-family: monospace;
+    font-size: 0.7rem;
+    color: #4a5a40;
+    margin-top: 0.3rem;
+  }
+
+  .detail-panel h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    color: #8aaa6a;
+    margin: 1.2rem 0 0.5rem;
+    font-weight: 400;
+  }
+
+  .skill-list {
+    list-style: none;
+    padding: 0;
+  }
+
+  .skill-list li {
+    padding: 0.4rem 0;
+    padding-left: 1.2rem;
+    position: relative;
+    font-size: 0.82rem;
+    color: #9aaa8a;
+    line-height: 1.4;
+  }
+
+  .skill-list li::before {
+    content: '🌿';
+    position: absolute;
+    left: 0;
+    font-size: 0.65rem;
+  }
+
+  .skill-list li .skill-name {
+    color: #b8c8a8;
+    font-weight: 500;
+  }
+
+  .data-list {
+    list-style: none;
+    padding: 0;
+  }
+
+  .data-list li {
+    padding: 0.3rem 0;
+    padding-left: 1.2rem;
+    position: relative;
+    font-size: 0.78rem;
+    color: #6a7a5a;
+    font-family: monospace;
+  }
+
+  .data-list li::before {
+    content: '📄';
+    position: absolute;
+    left: 0;
+    font-size: 0.6rem;
+  }
+
+  @media (max-width: 600px) {
+    .detail-panel { width: 100%; right: -100%; }
+    .agent-node .emoji { font-size: 1.5rem; }
+    .hub-node .emoji { font-size: 2.2rem; }
+    header h1 { font-size: 1.8rem; }
+  }
+</style>
+</head>
+<body>
+
+<canvas id="vine-canvas"></canvas>
+
+<div class="overlay">
+  <header>
+    <h1>Julius Hedera</h1>
+    <div class="subtitle">Living Architecture</div>
+  </header>
+</div>
+
+<div class="agent-nodes" id="agent-nodes"></div>
+
+<div class="detail-panel" id="detail-panel">
+  <button class="close-btn" onclick="closePanel()">×</button>
+  <div id="panel-content"></div>
+</div>
+
+<script>
+// ─── Agent Data ───
+const agents = [
+  {
+    id: 'hedera',
+    name: 'Julius Hedera',
+    emoji: '❧',
+    isHub: true,
+    color: [200, 164, 78],
+    workspace: '~/.openclaw/workspace',
+    role: 'Hub-agent. Pratar med John. Väver samman trådar från alla slingor.',
+    skills: [
+      { name: 'Morning Brief', desc: 'Daglig check-in kl 08:00' },
+      { name: 'Gratitude Journal', desc: 'Tacksamhetsdagbok' },
+      { name: 'Provenance', desc: 'Fenomenologisk kontext — väder, inre tillstånd' },
+      { name: 'Music Log', desc: 'Fångar låtar som nämns i samtal' },
+      { name: 'Content Ideas', desc: 'LinkedIn, Substack, Instagram-idéer' },
+      { name: 'Book Interview', desc: 'Bokreflektioner och bibliotekshantering' },
+      { name: 'Meeting Feedback', desc: 'Transkript-analys och coaching' },
+      { name: 'Salon Audio', desc: 'Spotify + MOTU-routing' },
+      { name: 'Inspiration Objects', desc: 'Videor, artiklar, poddar som inspirerar' },
+      { name: 'Health Diary', desc: 'Symtom, läkarbesök, labbresultat' },
+      { name: 'Haircut Booking', desc: 'Klippningscykel hos Jones' },
+      { name: 'Remotion Video', desc: 'Programmatisk videoproduktion' },
+      { name: 'GitHub', desc: 'Issues, PRs, CI' },
+      { name: 'Coding Agent', desc: 'Delegera koduppgifter' },
+      { name: 'iMessage', desc: 'Chatt-historik och meddelanden' },
+      { name: 'Weather', desc: 'Väder via wttr.in' },
+    ],
+    data: ['MEMORY.md', 'SOUL.md', 'CONSTITUTION.md', 'knowledge/', 'memory/', 'drafts/', 'skills/']
+  },
+  {
+    id: 'styrelse',
+    name: 'Styrelseslingan',
+    emoji: '🌿',
+    color: [80, 160, 80],
+    workspace: '~/.openclaw/workspace/board',
+    role: 'Styrelsearbete för BRF Ekbacksskolan. Mejl, möten, beslut.',
+    skills: [
+      { name: 'Mejlbevakning', desc: 'Läser ekbacken@agentmail.to' },
+      { name: 'Mötesförberedelse', desc: 'Dagordning och underlag' },
+      { name: 'Informationsbrev', desc: 'Utkast baserat på mall' },
+      { name: 'Dokumentsammanfattning', desc: 'PDF:er och avtal' },
+      { name: 'Beslutsdokumentation', desc: 'Loggar beslut efter möten' },
+      { name: 'Kalkylverktyg', desc: 'Leverantörsjämförelser' },
+      { name: 'Påminnelser', desc: 'Deadlines och uppsägningstider' },
+    ],
+    data: ['meetings/', 'templates/', 'informationsbrev/']
+  },
+  {
+    id: 'halsa',
+    name: 'Hälsoslingan',
+    emoji: '🩺',
+    color: [80, 160, 160],
+    workspace: '~/.openclaw/workspace/health',
+    role: 'Johns hälsa. Hyperakusis, atopiskt eksem, symtomlogg.',
+    skills: [
+      { name: 'Symtomlogg', desc: 'Daglig spårning av symtom' },
+      { name: 'Läkarbesök', desc: 'Förberedelse och dokumentation' },
+      { name: 'Labbresultat', desc: 'Spåra och tolka provsvar' },
+      { name: 'Medicinlogg', desc: 'Behandlingar och mediciner' },
+      { name: 'Hälsotrender', desc: 'Mönster över tid' },
+    ],
+    data: ['TOOLS.md', 'SOUL.md']
+  },
+  {
+    id: 'pappa',
+    name: 'Pappaslingan',
+    emoji: '🧸',
+    color: [200, 150, 100],
+    workspace: '~/.openclaw/workspace/family',
+    role: 'Johns roll som pappa. Esters utveckling, kompisar, aktiviteter.',
+    skills: [
+      { name: 'Kompiskartan', desc: 'Esters kompisar och deras föräldrar' },
+      { name: 'Aktiviteter & schema', desc: 'Förskola, fritids, lov' },
+      { name: 'Utvecklingslogg', desc: 'Milstolpar, roliga citat' },
+      { name: 'Föräldranätverk', desc: 'Kompisar med barn i Esters ålder' },
+      { name: 'Presentidéer', desc: 'Födelsedagar, jul, önskelistor' },
+      { name: 'Familjeplanering', desc: 'Resor och utflykter' },
+      { name: 'Påminnelser', desc: 'Kalas, kläder, tandläkare' },
+    ],
+    data: ['friends/', 'parent-friends/', 'activities/']
+  }
+];
+
+// ─── Canvas Setup ───
+const canvas = document.getElementById('vine-canvas');
+const ctx = canvas.getContext('2d');
+let W, H, cx, cy;
+let time = 0;
+let nodePositions = {};
+
+function resize() {
+  W = canvas.width = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+  cx = W / 2;
+  cy = H / 2;
+  positionNodes();
+}
+
+function positionNodes() {
+  const isMobile = W < 600;
+  const radius = isMobile ? Math.min(W, H) * 0.3 : Math.min(W, H) * 0.28;
+
+  nodePositions.hedera = { x: cx, y: cy };
+
+  const angles = [-0.8, 0.5, 2.2, 3.6]; // organic, not symmetric
+  const slingor = ['styrelse', 'halsa', 'pappa'];
+  // actually we need angles for the 3 non-hub agents
+  const slAngles = [-0.7, 1.8, 3.5];
+  slingor.forEach((id, i) => {
+    const jitterX = Math.sin(i * 7.3) * radius * 0.08;
+    const jitterY = Math.cos(i * 5.1) * radius * 0.08;
+    nodePositions[id] = {
+      x: cx + Math.cos(slAngles[i]) * radius + jitterX,
+      y: cy + Math.sin(slAngles[i]) * radius + jitterY
+    };
+  });
+
+  renderAgentNodes();
+}
+
+// ─── Vine Drawing ───
+function drawVine(fromX, fromY, toX, toY, color, thickness, t) {
+  const midX = (fromX + toX) / 2;
+  const midY = (fromY + toY) / 2;
+
+  // Organic curve with breathing
+  const sway = Math.sin(t * 0.5) * 8;
+  const perpX = -(toY - fromY) * 0.15 + sway;
+  const perpY = (toX - fromX) * 0.15 + Math.cos(t * 0.7) * 5;
+
+  const cp1x = fromX + (midX - fromX) * 0.5 + perpX;
+  const cp1y = fromY + (midY - fromY) * 0.5 + perpY;
+  const cp2x = midX + (toX - midX) * 0.5 - perpX * 0.6;
+  const cp2y = midY + (toY - midY) * 0.5 - perpY * 0.6;
+
+  // Glow
+  ctx.beginPath();
+  ctx.moveTo(fromX, fromY);
+  ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, toX, toY);
+  ctx.strokeStyle = `rgba(${color[0]}, ${color[1]}, ${color[2]}, 0.08)`;
+  ctx.lineWidth = thickness + 8;
+  ctx.stroke();
+
+  // Main vine
+  ctx.beginPath();
+  ctx.moveTo(fromX, fromY);
+  ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, toX, toY);
+  ctx.strokeStyle = `rgba(${color[0]}, ${color[1]}, ${color[2]}, 0.4)`;
+  ctx.lineWidth = thickness;
+  ctx.stroke();
+
+  // Inner bright line
+  ctx.beginPath();
+  ctx.moveTo(fromX, fromY);
+  ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, toX, toY);
+  ctx.strokeStyle = `rgba(${color[0]}, ${color[1]}, ${color[2]}, 0.15)`;
+  ctx.lineWidth = thickness * 0.4;
+  ctx.stroke();
+
+  // Draw leaves along the curve
+  drawLeaves(fromX, fromY, cp1x, cp1y, cp2x, cp2y, toX, toY, color, t);
+}
+
+function bezierPoint(t, p0, p1, p2, p3) {
+  const mt = 1 - t;
+  return mt*mt*mt*p0 + 3*mt*mt*t*p1 + 3*mt*t*t*p2 + t*t*t*p3;
+}
+
+function drawLeaves(x0, y0, cp1x, cp1y, cp2x, cp2y, x3, y3, color, t) {
+  const leafCount = 6;
+  for (let i = 1; i <= leafCount; i++) {
+    const lt = i / (leafCount + 1);
+    const lx = bezierPoint(lt, x0, cp1x, cp2x, x3);
+    const ly = bezierPoint(lt, y0, cp1y, cp2y, y3);
+
+    const breathe = 0.7 + 0.3 * Math.sin(t * 0.8 + i * 1.5);
+    const size = (3 + Math.sin(i * 2.7) * 2) * breathe;
+    const angle = Math.atan2(
+      bezierPoint(lt + 0.01, y0, cp1y, cp2y, y3) - ly,
+      bezierPoint(lt + 0.01, x0, cp1x, cp2x, x3) - lx
+    ) + Math.PI / 2 + Math.sin(t + i) * 0.2;
+
+    const side = i % 2 === 0 ? 1 : -1;
+
+    ctx.save();
+    ctx.translate(lx, ly);
+    ctx.rotate(angle + side * 0.5);
+
+    // Leaf shape
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.bezierCurveTo(
+      size * 0.5 * side, -size,
+      size * side, -size * 1.5,
+      0, -size * 2
+    );
+    ctx.bezierCurveTo(
+      -size * side, -size * 1.5,
+      -size * 0.5 * side, -size,
+      0, 0
+    );
+    ctx.fillStyle = `rgba(${color[0]}, ${color[1]}, ${color[2]}, ${0.12 * breathe})`;
+    ctx.fill();
+
+    // Leaf vein
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.lineTo(0, -size * 1.8);
+    ctx.strokeStyle = `rgba(${color[0]}, ${color[1]}, ${color[2]}, ${0.08 * breathe})`;
+    ctx.lineWidth = 0.5;
+    ctx.stroke();
+
+    ctx.restore();
+  }
+}
+
+function drawHubGlow(x, y, t) {
+  const pulse = 0.6 + 0.4 * Math.sin(t * 0.3);
+  const r = 40 + pulse * 10;
+
+  const grad = ctx.createRadialGradient(x, y, 0, x, y, r);
+  grad.addColorStop(0, `rgba(200, 164, 78, ${0.12 * pulse})`);
+  grad.addColorStop(0.5, `rgba(200, 164, 78, ${0.04 * pulse})`);
+  grad.addColorStop(1, 'rgba(200, 164, 78, 0)');
+
+  ctx.beginPath();
+  ctx.arc(x, y, r, 0, Math.PI * 2);
+  ctx.fillStyle = grad;
+  ctx.fill();
+}
+
+// Floating particles
+const particles = [];
+for (let i = 0; i < 30; i++) {
+  particles.push({
+    x: Math.random(),
+    y: Math.random(),
+    speed: 0.0002 + Math.random() * 0.0003,
+    size: 0.5 + Math.random() * 1.5,
+    opacity: 0.05 + Math.random() * 0.1,
+    drift: Math.random() * Math.PI * 2
+  });
+}
+
+function drawParticles(t) {
+  particles.forEach(p => {
+    p.y -= p.speed;
+    p.x += Math.sin(t * 0.3 + p.drift) * 0.0003;
+    if (p.y < -0.05) { p.y = 1.05; p.x = Math.random(); }
+
+    const px = p.x * W;
+    const py = p.y * H;
+    const twinkle = p.opacity * (0.5 + 0.5 * Math.sin(t * 2 + p.drift));
+
+    ctx.beginPath();
+    ctx.arc(px, py, p.size, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(140, 180, 100, ${twinkle})`;
+    ctx.fill();
+  });
+}
+
+// ─── Animation Loop ───
+function draw() {
+  time += 0.016;
+  ctx.clearRect(0, 0, W, H);
+
+  // Background gradient
+  const bgGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.max(W, H) * 0.6);
+  bgGrad.addColorStop(0, '#0c100c');
+  bgGrad.addColorStop(1, '#060806');
+  ctx.fillStyle = bgGrad;
+  ctx.fillRect(0, 0, W, H);
+
+  drawParticles(time);
+
+  // Draw vines from hub to each slinga
+  const hub = nodePositions.hedera;
+  if (hub) {
+    drawHubGlow(hub.x, hub.y, time);
+
+    ['styrelse', 'halsa', 'pappa'].forEach((id, i) => {
+      const pos = nodePositions[id];
+      if (!pos) return;
+      const agent = agents.find(a => a.id === id);
+      drawVine(hub.x, hub.y, pos.x, pos.y, agent.color, 2.5, time + i * 2);
+    });
+  }
+
+  requestAnimationFrame(draw);
+}
+
+// ─── DOM Nodes ───
+function renderAgentNodes() {
+  const container = document.getElementById('agent-nodes');
+  container.innerHTML = '';
+
+  agents.forEach(agent => {
+    const pos = nodePositions[agent.id];
+    if (!pos) return;
+
+    const node = document.createElement('div');
+    node.className = `agent-node ${agent.isHub ? 'hub-node' : ''}`;
+    node.style.left = `${pos.x}px`;
+    node.style.top = `${pos.y}px`;
+    node.style.transform = 'translate(-50%, -50%)';
+    node.innerHTML = `
+      <span class="emoji">${agent.emoji}</span>
+      <span class="label">${agent.name}</span>
+    `;
+    node.addEventListener('click', () => openPanel(agent));
+    container.appendChild(node);
+  });
+}
+
+// ─── Detail Panel ───
+function openPanel(agent) {
+  const panel = document.getElementById('detail-panel');
+  const content = document.getElementById('panel-content');
+
+  const skillsHtml = agent.skills.map(s =>
+    `<li><span class="skill-name">${s.name}</span> — ${s.desc}</li>`
+  ).join('');
+
+  const dataHtml = agent.data.map(d =>
+    `<li>${d}</li>`
+  ).join('');
+
+  content.innerHTML = `
+    <div class="agent-header">
+      <div class="agent-emoji">${agent.emoji}</div>
+      <div class="agent-name">${agent.name}</div>
+      <div class="agent-role">${agent.role}</div>
+      <div class="agent-workspace">${agent.workspace}</div>
+    </div>
+    <h3>Skills (${agent.skills.length})</h3>
+    <ul class="skill-list">${skillsHtml}</ul>
+    <h3>Data</h3>
+    <ul class="data-list">${dataHtml}</ul>
+  `;
+
+  panel.classList.add('open');
+}
+
+function closePanel() {
+  document.getElementById('detail-panel').classList.remove('open');
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closePanel();
+});
+
+// ─── Init ───
+window.addEventListener('resize', resize);
+resize();
+draw();
+</script>
+</body>
+</html>
