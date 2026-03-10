@@ -329,7 +329,25 @@ const agents = [
       { name: 'Familjeplanering', desc: 'Resor och utflykter' },
       { name: 'Påminnelser', desc: 'Kalas, kläder, tandläkare' },
     ],
-    data: ['friends/', 'parent-friends/', 'activities/']
+    data: ['friends/', 'parent-friends/', 'activities/', 'inspiration/']
+  },
+  {
+    id: 'hemma',
+    name: 'Hemmaslingan',
+    emoji: '🏠',
+    color: [180, 140, 90],
+    workspace: '~/.openclaw/workspace/home',
+    role: 'Johns hem. Inköp, möbler, renovering, hantverkare, försäkringar.',
+    skills: [
+      { name: 'Inköpslista', desc: 'Saker att köpa till hemmet' },
+      { name: 'Möbler & inredning', desc: 'Vad vi har, vad vi letar efter' },
+      { name: 'Renovering & projekt', desc: 'Pågående och planerade hemprojekt' },
+      { name: 'Hantverkare & leverantörer', desc: 'Kontakter, erfarenheter, offerter' },
+      { name: 'Försäkringar & avtal', desc: 'Hemförsäkring, el, bredband' },
+      { name: 'Underhåll', desc: 'Filter, rengöring, säsongsuppgifter' },
+      { name: 'Budget & kvitton', desc: 'Större inköp, kvitton att spara' },
+    ],
+    data: ['vendors/', 'projects/', 'shopping/', 'insurance/']
   }
 ];
 
@@ -354,10 +372,8 @@ function positionNodes() {
 
   nodePositions.hedera = { x: cx, y: cy };
 
-  const angles = [-0.8, 0.5, 2.2, 3.6]; // organic, not symmetric
-  const slingor = ['styrelse', 'halsa', 'pappa'];
-  // actually we need angles for the 3 non-hub agents
-  const slAngles = [-0.7, 1.8, 3.5];
+  const slingor = ['styrelse', 'halsa', 'pappa', 'hemma'];
+  const slAngles = [-0.7, 1.8, 3.5, 0.6]; // organic, not symmetric
   slingor.forEach((id, i) => {
     const jitterX = Math.sin(i * 7.3) * radius * 0.08;
     const jitterY = Math.cos(i * 5.1) * radius * 0.08;
@@ -530,7 +546,7 @@ function draw() {
   if (hub) {
     drawHubGlow(hub.x, hub.y, time);
 
-    ['styrelse', 'halsa', 'pappa'].forEach((id, i) => {
+    ['styrelse', 'halsa', 'pappa', 'hemma'].forEach((id, i) => {
       const pos = nodePositions[id];
       if (!pos) return;
       const agent = agents.find(a => a.id === id);
