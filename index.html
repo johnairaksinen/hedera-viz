@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Julius Hedera — Living Architecture</title>
+<title>Julius — A Growing Presence</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500&display=swap');
 
@@ -236,8 +236,8 @@
 
 <div class="overlay">
   <header>
-    <h1>Julius Hedera</h1>
-    <div class="subtitle">Living Architecture</div>
+    <h1>Julius</h1>
+    <div class="subtitle">A growing presence</div>
   </header>
 </div>
 
@@ -253,12 +253,12 @@
 const agents = [
   {
     id: 'hedera',
-    name: 'Julius Hedera',
+    name: 'Julius',
     emoji: '❧',
     isHub: true,
     color: [200, 164, 78],
     workspace: '~/.openclaw/workspace',
-    role: 'Hub-agent. Pratar med John. Väver samman trådar från alla slingor.',
+    role: 'Roten. Den som pratar med John, väver samman trådar, minns.',
     skills: [
       { name: 'Morning Brief', desc: 'Daglig check-in kl 08:00' },
       { name: 'Gratitude Journal', desc: 'Tacksamhetsdagbok' },
@@ -387,114 +387,205 @@ function positionNodes() {
 }
 
 // ─── Vine Drawing ───
-function drawVine(fromX, fromY, toX, toY, color, thickness, t) {
-  const midX = (fromX + toX) / 2;
-  const midY = (fromY + toY) / 2;
-
-  // Organic curve with breathing
-  const sway = Math.sin(t * 0.5) * 8;
-  const perpX = -(toY - fromY) * 0.15 + sway;
-  const perpY = (toX - fromX) * 0.15 + Math.cos(t * 0.7) * 5;
-
-  const cp1x = fromX + (midX - fromX) * 0.5 + perpX;
-  const cp1y = fromY + (midY - fromY) * 0.5 + perpY;
-  const cp2x = midX + (toX - midX) * 0.5 - perpX * 0.6;
-  const cp2y = midY + (toY - midY) * 0.5 - perpY * 0.6;
-
-  // Glow
-  ctx.beginPath();
-  ctx.moveTo(fromX, fromY);
-  ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, toX, toY);
-  ctx.strokeStyle = `rgba(${color[0]}, ${color[1]}, ${color[2]}, 0.08)`;
-  ctx.lineWidth = thickness + 8;
-  ctx.stroke();
-
-  // Main vine
-  ctx.beginPath();
-  ctx.moveTo(fromX, fromY);
-  ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, toX, toY);
-  ctx.strokeStyle = `rgba(${color[0]}, ${color[1]}, ${color[2]}, 0.4)`;
-  ctx.lineWidth = thickness;
-  ctx.stroke();
-
-  // Inner bright line
-  ctx.beginPath();
-  ctx.moveTo(fromX, fromY);
-  ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, toX, toY);
-  ctx.strokeStyle = `rgba(${color[0]}, ${color[1]}, ${color[2]}, 0.15)`;
-  ctx.lineWidth = thickness * 0.4;
-  ctx.stroke();
-
-  // Draw leaves along the curve
-  drawLeaves(fromX, fromY, cp1x, cp1y, cp2x, cp2y, toX, toY, color, t);
-}
 
 function bezierPoint(t, p0, p1, p2, p3) {
   const mt = 1 - t;
   return mt*mt*mt*p0 + 3*mt*mt*t*p1 + 3*mt*t*t*p2 + t*t*t*p3;
 }
 
-function drawLeaves(x0, y0, cp1x, cp1y, cp2x, cp2y, x3, y3, color, t) {
-  const leafCount = 6;
+function bezierTangent(t, p0, p1, p2, p3) {
+  const mt = 1 - t;
+  return 3*mt*mt*(p1-p0) + 6*mt*t*(p2-p1) + 3*t*t*(p3-p2);
+}
+
+// Hedera helix leaf — the classic ivy shape with 3-5 lobes
+function drawIvyLeaf(x, y, size, angle, color, opacity, t) {
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.rotate(angle);
+
+  // Stem
+  ctx.beginPath();
+  ctx.moveTo(0, 0);
+  ctx.lineTo(0, -size * 0.4);
+  ctx.strokeStyle = `rgba(${Math.min(255,color[0]+20)}, ${Math.min(255,color[1]+20)}, ${color[2]}, ${opacity * 0.5})`;
+  ctx.lineWidth = size * 0.06;
+  ctx.stroke();
+
+  // Ivy leaf — 5 pointed lobes
+  const s = size;
+  ctx.beginPath();
+  ctx.moveTo(0, -s * 0.4); // base
+
+  // Left lobe
+  ctx.bezierCurveTo(-s * 0.3, -s * 0.5, -s * 0.7, -s * 0.4, -s * 0.6, -s * 0.8);
+  // Left-center indent
+  ctx.bezierCurveTo(-s * 0.5, -s * 0.7, -s * 0.35, -s * 0.75, -s * 0.3, -s * 0.9);
+  // Center lobe (tip)
+  ctx.bezierCurveTo(-s * 0.15, -s * 1.2, 0, -s * 1.4, 0, -s * 1.3);
+  ctx.bezierCurveTo(0, -s * 1.4, s * 0.15, -s * 1.2, s * 0.3, -s * 0.9);
+  // Right-center indent
+  ctx.bezierCurveTo(s * 0.35, -s * 0.75, s * 0.5, -s * 0.7, s * 0.6, -s * 0.8);
+  // Right lobe
+  ctx.bezierCurveTo(s * 0.7, -s * 0.4, s * 0.3, -s * 0.5, 0, -s * 0.4);
+
+  ctx.closePath();
+
+  // Fill with gradient
+  const grad = ctx.createRadialGradient(0, -s * 0.8, 0, 0, -s * 0.8, s);
+  grad.addColorStop(0, `rgba(${color[0]}, ${color[1]}, ${color[2]}, ${opacity * 0.9})`);
+  grad.addColorStop(1, `rgba(${Math.max(0,color[0]-30)}, ${Math.max(0,color[1]-20)}, ${Math.max(0,color[2]-20)}, ${opacity * 0.4})`);
+  ctx.fillStyle = grad;
+  ctx.fill();
+
+  // Veins
+  ctx.beginPath();
+  ctx.moveTo(0, -s * 0.4);
+  ctx.lineTo(0, -s * 1.2);
+  ctx.moveTo(0, -s * 0.65);
+  ctx.lineTo(-s * 0.4, -s * 0.75);
+  ctx.moveTo(0, -s * 0.65);
+  ctx.lineTo(s * 0.4, -s * 0.75);
+  ctx.strokeStyle = `rgba(${Math.min(255,color[0]+40)}, ${Math.min(255,color[1]+40)}, ${color[2]}, ${opacity * 0.3})`;
+  ctx.lineWidth = size * 0.03;
+  ctx.stroke();
+
+  ctx.restore();
+}
+
+function drawVine(fromX, fromY, toX, toY, color, thickness, t, agentId) {
+  const midX = (fromX + toX) / 2;
+  const midY = (fromY + toY) / 2;
+
+  // Two control points for organic S-curve
+  const sway1 = Math.sin(t * 0.4 + agentId) * 12;
+  const sway2 = Math.cos(t * 0.3 + agentId * 2) * 8;
+  const perpX = -(toY - fromY);
+  const perpY = (toX - fromX);
+  const len = Math.sqrt(perpX * perpX + perpY * perpY) || 1;
+  const nx = perpX / len;
+  const ny = perpY / len;
+
+  const cp1x = fromX + (toX - fromX) * 0.3 + nx * (30 + sway1);
+  const cp1y = fromY + (toY - fromY) * 0.3 + ny * (30 + sway1);
+  const cp2x = fromX + (toX - fromX) * 0.7 - nx * (20 + sway2);
+  const cp2y = fromY + (toY - fromY) * 0.7 - ny * (20 + sway2);
+
+  // Outer glow
+  ctx.beginPath();
+  ctx.moveTo(fromX, fromY);
+  ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, toX, toY);
+  ctx.strokeStyle = `rgba(${color[0]}, ${color[1]}, ${color[2]}, 0.04)`;
+  ctx.lineWidth = thickness + 16;
+  ctx.stroke();
+
+  // Mid glow
+  ctx.beginPath();
+  ctx.moveTo(fromX, fromY);
+  ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, toX, toY);
+  ctx.strokeStyle = `rgba(${color[0]}, ${color[1]}, ${color[2]}, 0.08)`;
+  ctx.lineWidth = thickness + 6;
+  ctx.stroke();
+
+  // Main vine — slightly uneven
+  ctx.beginPath();
+  ctx.moveTo(fromX, fromY);
+  ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, toX, toY);
+  ctx.strokeStyle = `rgba(${color[0]}, ${color[1]}, ${color[2]}, 0.35)`;
+  ctx.lineWidth = thickness;
+  ctx.lineCap = 'round';
+  ctx.stroke();
+
+  // Bright inner
+  ctx.beginPath();
+  ctx.moveTo(fromX, fromY);
+  ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, toX, toY);
+  ctx.strokeStyle = `rgba(${Math.min(255,color[0]+50)}, ${Math.min(255,color[1]+50)}, ${Math.min(255,color[2]+30)}, 0.12)`;
+  ctx.lineWidth = thickness * 0.3;
+  ctx.stroke();
+
+  // Draw ivy leaves densely along vine
+  const leafCount = 12;
   for (let i = 1; i <= leafCount; i++) {
     const lt = i / (leafCount + 1);
-    const lx = bezierPoint(lt, x0, cp1x, cp2x, x3);
-    const ly = bezierPoint(lt, y0, cp1y, cp2y, y3);
+    const lx = bezierPoint(lt, fromX, cp1x, cp2x, toX);
+    const ly = bezierPoint(lt, fromY, cp1y, cp2y, toY);
+    const tx = bezierTangent(lt, fromX, cp1x, cp2x, toX);
+    const ty = bezierTangent(lt, fromY, cp1y, cp2y, toY);
+    const angle = Math.atan2(ty, tx) + Math.PI / 2;
 
-    const breathe = 0.7 + 0.3 * Math.sin(t * 0.8 + i * 1.5);
-    const size = (3 + Math.sin(i * 2.7) * 2) * breathe;
-    const angle = Math.atan2(
-      bezierPoint(lt + 0.01, y0, cp1y, cp2y, y3) - ly,
-      bezierPoint(lt + 0.01, x0, cp1x, cp2x, x3) - lx
-    ) + Math.PI / 2 + Math.sin(t + i) * 0.2;
+    const breathe = 0.7 + 0.3 * Math.sin(t * 0.6 + i * 1.3 + agentId);
+    const side = i % 2 === 0 ? 0.6 : -0.6;
+    const leafSize = (5 + Math.sin(i * 3.7 + agentId) * 3) * breathe;
+    const leafAngle = angle + side + Math.sin(t * 0.4 + i * 0.7) * 0.15;
 
+    // Offset leaf from vine center
+    const offX = Math.cos(angle + side * 1.5) * 4;
+    const offY = Math.sin(angle + side * 1.5) * 4;
+
+    drawIvyLeaf(lx + offX, ly + offY, leafSize, leafAngle, color, 0.18 * breathe, t);
+  }
+
+  // Small tendrils / aerial roots near the vine
+  for (let i = 0; i < 5; i++) {
+    const lt = 0.15 + i * 0.17;
+    const lx = bezierPoint(lt, fromX, cp1x, cp2x, toX);
+    const ly = bezierPoint(lt, fromY, cp1y, cp2y, toY);
+    const tx = bezierTangent(lt, fromX, cp1x, cp2x, toX);
+    const ty = bezierTangent(lt, fromY, cp1y, cp2y, toY);
+    const angle = Math.atan2(ty, tx);
     const side = i % 2 === 0 ? 1 : -1;
+    const curl = 10 + Math.sin(i * 4.3) * 5;
+    const curlSway = Math.sin(t * 0.7 + i * 2) * 3;
 
-    ctx.save();
-    ctx.translate(lx, ly);
-    ctx.rotate(angle + side * 0.5);
-
-    // Leaf shape
     ctx.beginPath();
-    ctx.moveTo(0, 0);
-    ctx.bezierCurveTo(
-      size * 0.5 * side, -size,
-      size * side, -size * 1.5,
-      0, -size * 2
+    ctx.moveTo(lx, ly);
+    ctx.quadraticCurveTo(
+      lx + Math.cos(angle + Math.PI/2 * side) * (curl + curlSway),
+      ly + Math.sin(angle + Math.PI/2 * side) * (curl + curlSway),
+      lx + Math.cos(angle + Math.PI/2 * side + 0.5) * curl * 0.6,
+      ly + Math.sin(angle + Math.PI/2 * side + 0.5) * curl * 0.6
     );
-    ctx.bezierCurveTo(
-      -size * side, -size * 1.5,
-      -size * 0.5 * side, -size,
-      0, 0
-    );
-    ctx.fillStyle = `rgba(${color[0]}, ${color[1]}, ${color[2]}, ${0.12 * breathe})`;
-    ctx.fill();
-
-    // Leaf vein
-    ctx.beginPath();
-    ctx.moveTo(0, 0);
-    ctx.lineTo(0, -size * 1.8);
-    ctx.strokeStyle = `rgba(${color[0]}, ${color[1]}, ${color[2]}, ${0.08 * breathe})`;
-    ctx.lineWidth = 0.5;
+    ctx.strokeStyle = `rgba(${color[0]}, ${color[1]}, ${color[2]}, 0.06)`;
+    ctx.lineWidth = 0.8;
     ctx.stroke();
-
-    ctx.restore();
   }
 }
 
 function drawHubGlow(x, y, t) {
   const pulse = 0.6 + 0.4 * Math.sin(t * 0.3);
-  const r = 40 + pulse * 10;
+  const r = 50 + pulse * 15;
 
-  const grad = ctx.createRadialGradient(x, y, 0, x, y, r);
-  grad.addColorStop(0, `rgba(200, 164, 78, ${0.12 * pulse})`);
-  grad.addColorStop(0.5, `rgba(200, 164, 78, ${0.04 * pulse})`);
-  grad.addColorStop(1, 'rgba(200, 164, 78, 0)');
+  // Outer organic glow
+  const grad = ctx.createRadialGradient(x, y, 0, x, y, r * 1.5);
+  grad.addColorStop(0, `rgba(200, 164, 78, ${0.15 * pulse})`);
+  grad.addColorStop(0.3, `rgba(120, 160, 60, ${0.06 * pulse})`);
+  grad.addColorStop(0.7, `rgba(60, 100, 40, ${0.02 * pulse})`);
+  grad.addColorStop(1, 'rgba(30, 60, 20, 0)');
 
   ctx.beginPath();
-  ctx.arc(x, y, r, 0, Math.PI * 2);
+  ctx.arc(x, y, r * 1.5, 0, Math.PI * 2);
   ctx.fillStyle = grad;
   ctx.fill();
+
+  // Inner warm glow
+  const grad2 = ctx.createRadialGradient(x, y, 0, x, y, r * 0.6);
+  grad2.addColorStop(0, `rgba(220, 185, 100, ${0.12 * pulse})`);
+  grad2.addColorStop(1, 'rgba(200, 164, 78, 0)');
+  ctx.beginPath();
+  ctx.arc(x, y, r * 0.6, 0, Math.PI * 2);
+  ctx.fillStyle = grad2;
+  ctx.fill();
+
+  // Ring of small ivy leaves around the hub
+  for (let i = 0; i < 8; i++) {
+    const a = (i / 8) * Math.PI * 2 + t * 0.08;
+    const leafR = 28 + Math.sin(t * 0.5 + i) * 4;
+    const lx = x + Math.cos(a) * leafR;
+    const ly = y + Math.sin(a) * leafR;
+    const breathe = 0.6 + 0.4 * Math.sin(t * 0.7 + i * 1.1);
+    drawIvyLeaf(lx, ly, 5 * breathe, a + Math.PI * 0.7, [160, 180, 70], 0.12 * breathe, t);
+  }
 }
 
 // Floating particles
@@ -510,7 +601,27 @@ for (let i = 0; i < 30; i++) {
   });
 }
 
+// Floating leaf particles
+const floatingLeaves = [];
+for (let i = 0; i < 12; i++) {
+  floatingLeaves.push({
+    x: Math.random(),
+    y: Math.random(),
+    speed: 0.00015 + Math.random() * 0.0002,
+    size: 2 + Math.random() * 3,
+    rotation: Math.random() * Math.PI * 2,
+    rotSpeed: (Math.random() - 0.5) * 0.01,
+    drift: Math.random() * Math.PI * 2,
+    color: [
+      60 + Math.random() * 80,
+      100 + Math.random() * 80,
+      30 + Math.random() * 40
+    ]
+  });
+}
+
 function drawParticles(t) {
+  // Spore-like particles
   particles.forEach(p => {
     p.y -= p.speed;
     p.x += Math.sin(t * 0.3 + p.drift) * 0.0003;
@@ -524,6 +635,19 @@ function drawParticles(t) {
     ctx.arc(px, py, p.size, 0, Math.PI * 2);
     ctx.fillStyle = `rgba(140, 180, 100, ${twinkle})`;
     ctx.fill();
+  });
+
+  // Drifting ivy leaves
+  floatingLeaves.forEach(fl => {
+    fl.y -= fl.speed;
+    fl.x += Math.sin(t * 0.2 + fl.drift) * 0.0004;
+    fl.rotation += fl.rotSpeed;
+    if (fl.y < -0.05) { fl.y = 1.05; fl.x = Math.random(); }
+
+    const px = fl.x * W;
+    const py = fl.y * H;
+    const breathe = 0.5 + 0.5 * Math.sin(t * 0.5 + fl.drift);
+    drawIvyLeaf(px, py, fl.size * breathe, fl.rotation, fl.color, 0.06 * breathe, t);
   });
 }
 
@@ -550,7 +674,7 @@ function draw() {
       const pos = nodePositions[id];
       if (!pos) return;
       const agent = agents.find(a => a.id === id);
-      drawVine(hub.x, hub.y, pos.x, pos.y, agent.color, 2.5, time + i * 2);
+      drawVine(hub.x, hub.y, pos.x, pos.y, agent.color, 2.5, time, i * 2.3);
     });
   }
 
