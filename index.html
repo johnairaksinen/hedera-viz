@@ -348,6 +348,24 @@ const agents = [
       { name: 'Budget & kvitton', desc: 'Större inköp, kvitton att spara' },
     ],
     data: ['vendors/', 'projects/', 'shopping/', 'insurance/']
+  },
+  {
+    id: 'ekonomi',
+    name: 'Ekonomislingan',
+    emoji: '💰',
+    color: [180, 160, 60],
+    workspace: '~/.openclaw/workspace/economy',
+    role: 'Johns personliga ekonomi. Avtal, försäkringar, skatt, sparande.',
+    skills: [
+      { name: 'Avtal & villkor', desc: 'Spara och bevaka avtal, förnyelsedatum' },
+      { name: 'Försäkringar', desc: 'Hem, liv, olycksfall, resa' },
+      { name: 'Skatt & deklaration', desc: 'Underlag, avdrag, deadlines' },
+      { name: 'Sparande & pension', desc: 'ISK, tjänstepension, översikt' },
+      { name: 'Abonnemang', desc: 'Mobil, streaming, SaaS — vad kostar vad' },
+      { name: 'Kvitton & dokument', desc: 'Garantibevis, intyg, arkiv' },
+      { name: 'Budget & överblick', desc: 'Var går pengarna' },
+    ],
+    data: ['contracts/', 'insurance/', 'tax/', 'savings/', 'subscriptions/', 'receipts/']
   }
 ];
 
@@ -372,8 +390,8 @@ function positionNodes() {
 
   nodePositions.hedera = { x: cx, y: cy };
 
-  const slingor = ['styrelse', 'halsa', 'pappa', 'hemma'];
-  const slAngles = [-0.7, 1.8, 3.5, 0.6]; // organic, not symmetric
+  const slingor = ['styrelse', 'halsa', 'pappa', 'hemma', 'ekonomi'];
+  const slAngles = [-0.7, 1.8, 3.5, 0.6, -1.8]; // organic, not symmetric
   slingor.forEach((id, i) => {
     const jitterX = Math.sin(i * 7.3) * radius * 0.08;
     const jitterY = Math.cos(i * 5.1) * radius * 0.08;
@@ -670,7 +688,7 @@ function draw() {
   if (hub) {
     drawHubGlow(hub.x, hub.y, time);
 
-    ['styrelse', 'halsa', 'pappa', 'hemma'].forEach((id, i) => {
+    ['styrelse', 'halsa', 'pappa', 'hemma', 'ekonomi'].forEach((id, i) => {
       const pos = nodePositions[id];
       if (!pos) return;
       const agent = agents.find(a => a.id === id);
