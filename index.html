@@ -180,25 +180,62 @@
     padding: 0;
   }
 
-  .skill-list li {
-    padding: 0.4rem 0;
-    padding-left: 1.2rem;
-    position: relative;
+  .skill-item {
+    border: 1px solid rgba(200, 164, 78, 0.06);
+    border-radius: 6px;
+    margin-bottom: 0.4rem;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+
+  .skill-item:hover { border-color: rgba(200, 164, 78, 0.15); }
+
+  .skill-header {
+    padding: 0.5rem 0.7rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
     font-size: 0.82rem;
     color: #9aaa8a;
-    line-height: 1.4;
   }
 
-  .skill-list li::before {
-    content: '🌿';
-    position: absolute;
-    left: 0;
+  .skill-header .skill-icon { font-size: 0.7rem; opacity: 0.6; }
+  .skill-header .skill-name { color: #b8c8a8; font-weight: 500; }
+  .skill-header .skill-arrow {
+    margin-left: auto;
+    font-size: 0.6rem;
+    color: #5a6a50;
+    transition: transform 0.2s;
+  }
+  .skill-item.open .skill-arrow { transform: rotate(90deg); }
+
+  .skill-detail {
+    display: none;
+    padding: 0 0.7rem 0.6rem;
+    font-size: 0.75rem;
+    color: #7a8a6a;
+    line-height: 1.5;
+  }
+
+  .skill-item.open .skill-detail { display: block; }
+
+  .skill-detail .example {
+    background: rgba(200, 164, 78, 0.04);
+    border-left: 2px solid rgba(200, 164, 78, 0.15);
+    padding: 0.4rem 0.6rem;
+    margin-top: 0.4rem;
+    border-radius: 0 4px 4px 0;
+    font-size: 0.72rem;
+    color: #8a9a7a;
+  }
+
+  .skill-detail .example-label {
     font-size: 0.65rem;
-  }
-
-  .skill-list li .skill-name {
-    color: #b8c8a8;
-    font-weight: 500;
+    color: #5a6a50;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 0.2rem;
   }
 
   .data-list {
@@ -206,20 +243,73 @@
     padding: 0;
   }
 
-  .data-list li {
-    padding: 0.3rem 0;
-    padding-left: 1.2rem;
-    position: relative;
+  .data-item {
+    padding: 0.35rem 0.7rem;
     font-size: 0.78rem;
     color: #6a7a5a;
     font-family: monospace;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.15s;
   }
 
-  .data-list li::before {
-    content: '📄';
-    position: absolute;
-    left: 0;
+  .data-item:hover { background: rgba(200, 164, 78, 0.04); }
+  .data-item .data-icon { font-size: 0.6rem; }
+  .data-item .data-count {
+    margin-left: auto;
+    font-size: 0.65rem;
+    color: #4a5a40;
+    background: rgba(200, 164, 78, 0.06);
+    padding: 0.1rem 0.4rem;
+    border-radius: 8px;
+  }
+
+  .data-files {
+    display: none;
+    padding: 0.2rem 0 0.2rem 1.4rem;
+    font-size: 0.7rem;
+    color: #5a6a4a;
+  }
+
+  .data-files.open { display: block; }
+
+  .data-file {
+    padding: 0.15rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+  }
+
+  .data-file .file-icon { font-size: 0.55rem; }
+
+  .stat-bar {
+    display: flex;
+    gap: 0.8rem;
+    margin: 1rem 0;
+    padding: 0.6rem;
+    background: rgba(200, 164, 78, 0.03);
+    border-radius: 6px;
+  }
+
+  .stat {
+    text-align: center;
+    flex: 1;
+  }
+
+  .stat-value {
+    font-size: 1.2rem;
+    color: #c8a44e;
+    font-family: 'Cormorant Garamond', serif;
+  }
+
+  .stat-label {
     font-size: 0.6rem;
+    color: #5a6a50;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
   }
 
   @media (max-width: 600px) {
@@ -260,24 +350,32 @@ const agents = [
     workspace: '~/.openclaw/workspace',
     role: 'Roten. Den som pratar med John, väver samman trådar, minns.',
     skills: [
-      { name: 'Morning Brief', desc: 'Daglig check-in kl 08:00' },
-      { name: 'Gratitude Journal', desc: 'Tacksamhetsdagbok' },
-      { name: 'Provenance', desc: 'Fenomenologisk kontext — väder, inre tillstånd' },
-      { name: 'Music Log', desc: 'Fångar låtar som nämns i samtal' },
-      { name: 'Content Ideas', desc: 'LinkedIn, Substack, Instagram-idéer' },
-      { name: 'Book Interview', desc: 'Bokreflektioner och bibliotekshantering' },
-      { name: 'Meeting Feedback', desc: 'Transkript-analys och coaching' },
-      { name: 'Salon Audio', desc: 'Spotify + MOTU-routing' },
-      { name: 'Inspiration Objects', desc: 'Videor, artiklar, poddar som inspirerar' },
-      { name: 'Health Diary', desc: 'Symtom, läkarbesök, labbresultat' },
-      { name: 'Haircut Booking', desc: 'Klippningscykel hos Jones' },
-      { name: 'Remotion Video', desc: 'Programmatisk videoproduktion' },
-      { name: 'GitHub', desc: 'Issues, PRs, CI' },
-      { name: 'Coding Agent', desc: 'Delegera koduppgifter' },
-      { name: 'iMessage', desc: 'Chatt-historik och meddelanden' },
-      { name: 'Weather', desc: 'Väder via wttr.in' },
+      { name: 'Morning Brief', desc: 'Daglig check-in kl 08:00', detail: 'Samlar väder, kalendern, mejl och gårdagens händelser. Skickas via iMessage varje morgon.', example: '☀️ -1°C. H&M-offerten hos Linda. Portal #8 imorgon. Inga möten idag.' },
+      { name: 'Gratitude Journal', desc: 'Tacksamhetsdagbok', detail: 'Fångar tacksamhet via "Tacksamhet:" meddelanden. Kvällspåminnelse kl 20:00.' },
+      { name: 'Provenance', desc: 'Fenomenologisk kontext', detail: 'Väder + inre tillstånd vid sessionens start. Inspirerat av Japans 72 mikrosäsonger.' },
+      { name: 'Music Log', desc: 'Låtar som nämns i samtal', detail: 'Fångar musik från konversationer och transkript. Blir spellistor.', example: 'Jonas nämnde Bohren & der Club of Gore → loggat → "Salongens mörka timmar"-spellista' },
+      { name: 'Content Ideas', desc: 'LinkedIn, Substack, Instagram', detail: 'Fångar idéer när de dyker upp. "Det här vore en bra post" → utkast direkt.' },
+      { name: 'Book Interview', desc: 'Bokreflektioner', detail: 'Två flöden: lägg till bok (Google Books API) eller djupintervju om en läst bok.', example: '60 böcker i biblioteket. Senast: "Det osynliga templet" av Ida Therén.' },
+      { name: 'Meeting Feedback', desc: 'Transkript-analys', detail: 'Analyserar mötesinspeelningar och ger coaching-feedback till John.' },
+      { name: 'Salon Audio', desc: 'Spotify + MOTU-routing', detail: 'Styr musik, volym, ljudzoner i salongen. MOTU 24Ao + Spotify API.' },
+      { name: 'Inspiration Objects', desc: 'Videor, artiklar, poddar', detail: 'YouTube-transkript, artiklar, böcker som inspirerar. Sparas i databasen med cover-bilder.', example: 'Aaron Levie: "Make Something Agents Want" → objekt #64' },
+      { name: 'Health Diary', desc: 'Symtom, läkarbesök', detail: 'Två spår: hyperakusis och atopiskt eksem. Dagbok, trender, läkarkommunikation.' },
+      { name: 'Haircut Booking', desc: 'Klippningscykel', detail: 'Spårar veckor sedan senaste klippning. Bokar hos Jones på Hårgänget via bokadirekt.se.' },
+      { name: 'Remotion Video', desc: 'Programmatisk video', detail: 'Skapar motion graphics med Remotion. Event-teasers, Instagram Reels.' },
+      { name: 'GitHub', desc: 'Issues, PRs, CI', detail: 'Hanterar kod via gh CLI. Issues, pull requests, CI-status.' },
+      { name: 'Coding Agent', desc: 'Delegera koduppgifter', detail: 'Spawnar Claude Code eller Codex för större byggprojekt.' },
+      { name: 'iMessage', desc: 'Meddelanden', detail: 'Läser och skickar iMessage. Primär kommunikationskanal med John.' },
+      { name: 'Weather', desc: 'Väder via wttr.in', detail: 'Hämtar väder för morgonbrief och provenance.' },
     ],
-    data: ['MEMORY.md', 'SOUL.md', 'CONSTITUTION.md', 'knowledge/', 'memory/', 'drafts/', 'skills/']
+    data: [
+      { path: 'MEMORY.md', icon: '🧠', desc: 'Långtidsminne', files: ['Moments That Shifted Something', 'People', 'Key Principles'] },
+      { path: 'SOUL.md', icon: '🎭', desc: 'Röst och identitet' },
+      { path: 'CONSTITUTION.md', icon: '📜', desc: 'Värderingar och riktning' },
+      { path: 'knowledge/', icon: '📚', desc: 'Kunskapsbas', count: 8, files: ['people.md', 'salon-operations.md', 'tech-stack.md', 'creative-voice.md', 'vendors.md'] },
+      { path: 'memory/', icon: '📅', desc: 'Dagliga anteckningar', count: '40+' },
+      { path: 'drafts/', icon: '✏️', desc: 'Utkast och research', count: '25+' },
+      { path: 'skills/', icon: '⚡', desc: 'Installerade skills', count: 16 }
+    ]
   },
   {
     id: 'styrelse',
@@ -287,15 +385,19 @@ const agents = [
     workspace: '~/.openclaw/workspace/board',
     role: 'Styrelsearbete för BRF Ekbacksskolan. Mejl, möten, beslut.',
     skills: [
-      { name: 'Mejlbevakning', desc: 'Läser ekbacken@agentmail.to' },
-      { name: 'Mötesförberedelse', desc: 'Dagordning och underlag' },
-      { name: 'Informationsbrev', desc: 'Utkast baserat på mall' },
-      { name: 'Dokumentsammanfattning', desc: 'PDF:er och avtal' },
-      { name: 'Beslutsdokumentation', desc: 'Loggar beslut efter möten' },
-      { name: 'Kalkylverktyg', desc: 'Leverantörsjämförelser' },
-      { name: 'Påminnelser', desc: 'Deadlines och uppsägningstider' },
+      { name: 'Mejlbevakning', desc: 'Läser ekbacken@agentmail.to', detail: 'Automatisk bevakning av BRF-mejl. Sammanfattar och flaggar viktigt.' },
+      { name: 'Mötesförberedelse', desc: 'Dagordning och underlag', detail: 'Sammanställer dagordning, beslutsförslag och underlag inför styrelsemöten.', example: 'Styrelsemöte 11/3: FJV-panna, ChargeNode-byte, häckklippning' },
+      { name: 'Informationsbrev', desc: 'Utkast baserat på mall', detail: '6 brev arkiverade. Mall och mönster dokumenterat.' },
+      { name: 'Dokumentsammanfattning', desc: 'PDF:er och avtal', detail: 'Läser och extraherar nyckelinfo från PDF:er och avtal.' },
+      { name: 'Beslutsdokumentation', desc: 'Loggar beslut efter möten', detail: 'Strukturerad logg av alla styrelsebeslut.' },
+      { name: 'Kalkylverktyg', desc: 'Leverantörsjämförelser', detail: 'ROI-kalkyler och leverantörsjämförelser.', example: 'Eways vs ChargeNode: break-even vid 3,00 kr/kWh konsumentpris' },
+      { name: 'Påminnelser', desc: 'Deadlines och uppsägningstider', detail: 'Flaggar stämmor, avtal som löper ut, brevsändning.' },
     ],
-    data: ['meetings/', 'templates/', 'informationsbrev/']
+    data: [
+      { path: 'meetings/', icon: '📋', desc: 'Mötesprotokoll', count: 3 },
+      { path: 'templates/', icon: '📝', desc: 'Brevmallar' },
+      { path: 'informationsbrev/', icon: '✉️', desc: 'Skickade brev', count: 6 }
+    ]
   },
   {
     id: 'halsa',
@@ -305,13 +407,16 @@ const agents = [
     workspace: '~/.openclaw/workspace/health',
     role: 'Johns hälsa. Hyperakusis, atopiskt eksem, symtomlogg.',
     skills: [
-      { name: 'Symtomlogg', desc: 'Daglig spårning av symtom' },
-      { name: 'Läkarbesök', desc: 'Förberedelse och dokumentation' },
-      { name: 'Labbresultat', desc: 'Spåra och tolka provsvar' },
-      { name: 'Medicinlogg', desc: 'Behandlingar och mediciner' },
-      { name: 'Hälsotrender', desc: 'Mönster över tid' },
+      { name: 'Symtomlogg', desc: 'Daglig spårning', detail: 'Registrera symtom, intensitet, triggers. Två spår: öron och hud.' },
+      { name: 'Läkarbesök', desc: 'Förberedelse och dokumentation', detail: 'Sammanställ symtomhistorik inför besök. Dokumentera resultat.' },
+      { name: 'Labbresultat', desc: 'Provsvar', detail: 'Spåra och jämföra labbvärden över tid.' },
+      { name: 'Medicinlogg', desc: 'Behandlingar', detail: 'Aktuella mediciner, doser, biverkningar.' },
+      { name: 'Hälsotrender', desc: 'Mönster över tid', detail: 'Identifiera triggers, förbättringar, säsongsmönster.' },
     ],
-    data: ['TOOLS.md', 'SOUL.md']
+    data: [
+      { path: 'TOOLS.md', icon: '🔧', desc: 'Verktyg och processer' },
+      { path: 'SOUL.md', icon: '🎭', desc: 'Identitet' }
+    ]
   },
   {
     id: 'pappa',
@@ -321,15 +426,20 @@ const agents = [
     workspace: '~/.openclaw/workspace/family',
     role: 'Johns roll som pappa. Esters utveckling, kompisar, aktiviteter.',
     skills: [
-      { name: 'Kompiskartan', desc: 'Esters kompisar och deras föräldrar' },
-      { name: 'Aktiviteter & schema', desc: 'Förskola, fritids, lov' },
-      { name: 'Utvecklingslogg', desc: 'Milstolpar, roliga citat' },
-      { name: 'Föräldranätverk', desc: 'Kompisar med barn i Esters ålder' },
-      { name: 'Presentidéer', desc: 'Födelsedagar, jul, önskelistor' },
-      { name: 'Familjeplanering', desc: 'Resor och utflykter' },
-      { name: 'Påminnelser', desc: 'Kalas, kläder, tandläkare' },
+      { name: 'Kompiskartan', desc: 'Esters kompisar och deras föräldrar', detail: 'En fil per barn: namn, ålder, föräldrar, kontaktinfo, relation.' },
+      { name: 'Aktiviteter & schema', desc: 'Förskola, fritids, lov', detail: 'Saker att göra efter förskolan, helgaktiviteter, schema.', example: 'Tranströmerbiblioteket, Pet Sounds Records, parklek' },
+      { name: 'Utvecklingslogg', desc: 'Milstolpar, roliga citat', detail: 'Saker Ester säger och lär sig. Det man vill minnas.', example: '"From one side it\'s John. From the other side it\'s Julius."' },
+      { name: 'Föräldranätverk', desc: 'Kompisar med barn i Esters ålder', detail: 'Johns vänner med barn. Playdates, gemensamma aktiviteter.' },
+      { name: 'Presentidéer', desc: 'Födelsedagar, jul, önskelistor', detail: 'Vad Ester önskar sig, vad hon fått, kalas att planera.' },
+      { name: 'Familjeplanering', desc: 'Resor och utflykter', detail: 'Semester, dagsutflykter, saker att göra ihop.' },
+      { name: 'Påminnelser', desc: 'Kalas, kläder, tandläkare', detail: 'Kalas att RSVP:a, kläder hon vuxit ur, bokade tider.' },
     ],
-    data: ['friends/', 'parent-friends/', 'activities/', 'inspiration/']
+    data: [
+      { path: 'friends/', icon: '👦', desc: 'Esters kompisar' },
+      { path: 'parent-friends/', icon: '👨‍👩‍👧', desc: 'Föräldranätverket' },
+      { path: 'activities/', icon: '🎨', desc: 'Aktiviteter', files: ['efter-forskolan.md'] },
+      { path: 'inspiration/', icon: '💡', desc: 'Inspiration', files: ['jesse-jana-transcript.md'] }
+    ]
   },
   {
     id: 'hemma',
@@ -339,15 +449,20 @@ const agents = [
     workspace: '~/.openclaw/workspace/home',
     role: 'Johns hem. Inköp, möbler, renovering, hantverkare, försäkringar.',
     skills: [
-      { name: 'Inköpslista', desc: 'Saker att köpa till hemmet' },
-      { name: 'Möbler & inredning', desc: 'Vad vi har, vad vi letar efter' },
-      { name: 'Renovering & projekt', desc: 'Pågående och planerade hemprojekt' },
-      { name: 'Hantverkare & leverantörer', desc: 'Kontakter, erfarenheter, offerter' },
-      { name: 'Försäkringar & avtal', desc: 'Hemförsäkring, el, bredband' },
-      { name: 'Underhåll', desc: 'Filter, rengöring, säsongsuppgifter' },
-      { name: 'Budget & kvitton', desc: 'Större inköp, kvitton att spara' },
+      { name: 'Inköpslista', desc: 'Saker att köpa till hemmet', detail: 'Prioritet, var man köper, ungefärligt pris.' },
+      { name: 'Möbler & inredning', desc: 'Vad vi har, vad vi letar efter', detail: 'Mått, inspiration, önskelista.' },
+      { name: 'Renovering & projekt', desc: 'Pågående hemprojekt', detail: 'Status, budget, tidsplan per projekt.' },
+      { name: 'Hantverkare & leverantörer', desc: 'Kontakter och erfarenheter', detail: 'Vem gör vad bra. Offerter, betyg, kontaktinfo.' },
+      { name: 'Försäkringar & avtal', desc: 'Hemförsäkring, el, bredband', detail: 'Förnyelsedatum, villkor, uppsägningstider.' },
+      { name: 'Underhåll', desc: 'Återkommande uppgifter', detail: 'Filter, rengöring, säsongsuppgifter.' },
+      { name: 'Budget & kvitton', desc: 'Större inköp', detail: 'Kvitton att spara, garantitider.' },
     ],
-    data: ['vendors/', 'projects/', 'shopping/', 'insurance/']
+    data: [
+      { path: 'vendors/', icon: '🔨', desc: 'Hantverkare' },
+      { path: 'projects/', icon: '🏗️', desc: 'Hemprojekt', files: ['gemensamt-betalkort.md'] },
+      { path: 'shopping/', icon: '🛒', desc: 'Inköpslistor' },
+      { path: 'insurance/', icon: '🛡️', desc: 'Försäkringar' }
+    ]
   },
   {
     id: 'ekonomi',
@@ -357,15 +472,22 @@ const agents = [
     workspace: '~/.openclaw/workspace/economy',
     role: 'Johns personliga ekonomi. Avtal, försäkringar, skatt, sparande.',
     skills: [
-      { name: 'Avtal & villkor', desc: 'Spara och bevaka avtal, förnyelsedatum' },
-      { name: 'Försäkringar', desc: 'Hem, liv, olycksfall, resa' },
-      { name: 'Skatt & deklaration', desc: 'Underlag, avdrag, deadlines' },
-      { name: 'Sparande & pension', desc: 'ISK, tjänstepension, översikt' },
-      { name: 'Abonnemang', desc: 'Mobil, streaming, SaaS — vad kostar vad' },
-      { name: 'Kvitton & dokument', desc: 'Garantibevis, intyg, arkiv' },
-      { name: 'Budget & överblick', desc: 'Var går pengarna' },
+      { name: 'Avtal & villkor', desc: 'Spara och bevaka avtal', detail: 'Förnyelsedatum, uppsägningstider, villkorssammanfattningar.', example: 'Revolut Standard — 0 kr/mån, litauisk banklicens, Joint Account aktivt' },
+      { name: 'Försäkringar', desc: 'Hem, liv, olycksfall, resa', detail: 'Villkor, premier, förnyelsedatum, självrisk.' },
+      { name: 'Skatt & deklaration', desc: 'Underlag och deadlines', detail: 'Deklarationsunderlag, avdrag (ROT/RUT), F-skatt.' },
+      { name: 'Sparande & pension', desc: 'ISK, tjänstepension', detail: 'Översikt av sparande. Vad ligger var.' },
+      { name: 'Abonnemang', desc: 'Vad kostar vad per månad', detail: 'Mobil, streaming, SaaS, gym. Vad kan sägas upp.' },
+      { name: 'Kvitton & dokument', desc: 'Garantibevis, intyg', detail: 'Digitalt arkiv av viktiga dokument.' },
+      { name: 'Budget & överblick', desc: 'Var går pengarna', detail: 'Månadskostnad totalt. Trender.' },
     ],
-    data: ['contracts/', 'insurance/', 'tax/', 'savings/', 'subscriptions/', 'receipts/']
+    data: [
+      { path: 'contracts/', icon: '📑', desc: 'Avtal', count: 1, files: ['revolut.md'] },
+      { path: 'insurance/', icon: '🛡️', desc: 'Försäkringar' },
+      { path: 'tax/', icon: '🏛️', desc: 'Skatt & deklaration' },
+      { path: 'savings/', icon: '💎', desc: 'Sparande' },
+      { path: 'subscriptions/', icon: '🔄', desc: 'Abonnemang' },
+      { path: 'receipts/', icon: '🧾', desc: 'Kvitton' }
+    ]
   }
 ];
 
@@ -727,13 +849,50 @@ function openPanel(agent) {
   const panel = document.getElementById('detail-panel');
   const content = document.getElementById('panel-content');
 
-  const skillsHtml = agent.skills.map(s =>
-    `<li><span class="skill-name">${s.name}</span> — ${s.desc}</li>`
-  ).join('');
+  const skillsHtml = agent.skills.map((s, i) => {
+    const exampleHtml = s.example
+      ? `<div class="example"><div class="example-label">Exempel</div>${s.example}</div>`
+      : '';
+    return `
+      <div class="skill-item" onclick="this.classList.toggle('open')">
+        <div class="skill-header">
+          <span class="skill-icon">🌿</span>
+          <span class="skill-name">${s.name}</span>
+          <span style="color:#6a7a5a">— ${s.desc}</span>
+          <span class="skill-arrow">▶</span>
+        </div>
+        <div class="skill-detail">
+          ${s.detail || ''}
+          ${exampleHtml}
+        </div>
+      </div>`;
+  }).join('');
 
-  const dataHtml = agent.data.map(d =>
-    `<li>${d}</li>`
-  ).join('');
+  const dataHtml = agent.data.map((d, i) => {
+    const item = typeof d === 'string' ? { path: d, icon: '📄' } : d;
+    const countBadge = item.count ? `<span class="data-count">${item.count}</span>` : '';
+    const filesHtml = item.files
+      ? `<div class="data-files" id="df-${i}">${item.files.map(f =>
+          `<div class="data-file"><span class="file-icon">📄</span> ${f}</div>`
+        ).join('')}</div>`
+      : '';
+    const clickHandler = item.files
+      ? `onclick="document.getElementById('df-${i}').classList.toggle('open')"`
+      : '';
+    return `
+      <div class="data-item" ${clickHandler}>
+        <span class="data-icon">${item.icon || '📄'}</span>
+        <span>${item.path}</span>
+        ${item.desc ? `<span style="color:#5a6a4a;font-family:Inter,sans-serif;font-size:0.68rem"> ${item.desc}</span>` : ''}
+        ${countBadge}
+      </div>
+      ${filesHtml}`;
+  }).join('');
+
+  const totalFiles = agent.data.reduce((sum, d) => {
+    const item = typeof d === 'string' ? {} : d;
+    return sum + (typeof item.count === 'number' ? item.count : (item.files ? item.files.length : 0));
+  }, 0);
 
   content.innerHTML = `
     <div class="agent-header">
@@ -742,10 +901,14 @@ function openPanel(agent) {
       <div class="agent-role">${agent.role}</div>
       <div class="agent-workspace">${agent.workspace}</div>
     </div>
-    <h3>Skills (${agent.skills.length})</h3>
-    <ul class="skill-list">${skillsHtml}</ul>
+    <div class="stat-bar">
+      <div class="stat"><div class="stat-value">${agent.skills.length}</div><div class="stat-label">Skills</div></div>
+      <div class="stat"><div class="stat-value">${agent.data.length}</div><div class="stat-label">Datakällor</div></div>
+    </div>
+    <h3>Skills</h3>
+    <div class="skill-list">${skillsHtml}</div>
     <h3>Data</h3>
-    <ul class="data-list">${dataHtml}</ul>
+    <div class="data-list">${dataHtml}</div>
   `;
 
   panel.classList.add('open');
