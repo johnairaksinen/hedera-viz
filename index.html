@@ -635,7 +635,6 @@ const agents = [
       { name: 'Meeting Feedback', desc: 'Transkript-analys', detail: 'Analyserar mötesinspeelningar och ger coaching-feedback till John.' },
       { name: 'Salon Audio', desc: 'Spotify + MOTU-routing', detail: 'Styr musik, volym, ljudzoner i salongen. MOTU 24Ao + Spotify API.' },
       { name: 'Inspiration Objects', desc: 'Videor, artiklar, poddar', detail: 'YouTube-transkript, artiklar, böcker som inspirerar. Sparas i databasen med cover-bilder.', example: 'Aaron Levie: "Make Something Agents Want" → objekt #64' },
-      { name: 'Health Diary', desc: 'Symtom, läkarbesök', detail: 'Två spår: hyperakusis och atopiskt eksem. Dagbok, trender, läkarkommunikation.' },
       { name: 'Haircut Booking', desc: 'Klippningscykel', detail: 'Spårar veckor sedan senaste klippning. Bokar hos Jones på Hårgänget via bokadirekt.se.' },
       { name: 'Remotion Video', desc: 'Programmatisk video', detail: 'Skapar motion graphics med Remotion. Event-teasers, Instagram Reels.' },
       { name: 'GitHub', desc: 'Issues, PRs, CI', detail: 'Hanterar kod via gh CLI. Issues, pull requests, CI-status.' },
@@ -650,7 +649,7 @@ const agents = [
       { path: 'knowledge/', icon: '📚', desc: 'Kunskapsbas', count: 8, files: ['people.md', 'salon-operations.md', 'tech-stack.md', 'creative-voice.md', 'vendors.md'] },
       { path: 'memory/', icon: '📅', desc: 'Dagliga anteckningar', count: '40+' },
       { path: 'drafts/', icon: '✏️', desc: 'Utkast och research', count: '25+' },
-      { path: 'skills/', icon: '⚡', desc: 'Installerade skills', count: 16 }
+      { path: 'skills/', icon: '⚡', desc: 'Installerade skills', count: 15 }
     ]
   },
   {
@@ -683,6 +682,7 @@ const agents = [
     workspace: '~/.openclaw/workspace/health',
     role: 'Johns hälsa. Hyperakusis, atopiskt eksem, symtomlogg.',
     skills: [
+      { name: 'Hälsodagbok', desc: 'Symtom, läkarbesök, behandling', detail: 'Två spår: hyperakusis och atopiskt eksem. Dagbok, trender, läkarkommunikation. Det som var Health Diary i Julius — nu hemma här.' },
       { name: 'Symtomlogg', desc: 'Daglig spårning', detail: 'Registrera symtom, intensitet, triggers. Två spår: öron och hud.' },
       { name: 'Läkarbesök', desc: 'Förberedelse och dokumentation', detail: 'Sammanställ symtomhistorik inför besök. Dokumentera resultat.' },
       { name: 'Labbresultat', desc: 'Provsvar', detail: 'Spåra och jämföra labbvärden över tid.' },
